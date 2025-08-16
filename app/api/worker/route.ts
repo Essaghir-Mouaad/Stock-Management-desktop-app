@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/app/utils/authClient";
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 import { error } from "console";
 
 export async function GET(request: NextRequest) {

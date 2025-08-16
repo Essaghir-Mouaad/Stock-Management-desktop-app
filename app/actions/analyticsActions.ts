@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma";
+import prisma from "../../lib/prisma";
 
 // Get daily stock movements for a specific date range
 export async function getDailyMovements(startDate: Date, endDate: Date, userId?: string) {

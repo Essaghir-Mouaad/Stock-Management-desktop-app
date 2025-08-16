@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/app/utils/authClient";
-import prisma from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 
 export async function POST(
     request: Request,

@@ -1,5 +1,5 @@
 import { Product } from "@/type";
-import prisma from "../lib/prisma";
+import prisma from "../../lib/prisma";
 // import { generateProductId } from "./utilityActions";
 
 export async function initialiseProductInvoice(email: string, name: string) {
