@@ -78,14 +78,14 @@ const PDFReportLayout = React.forwardRef(
         : 0;
 
     // get the weekely data
-    const calculateWeeklyTotals = (dailyMovements:any) => {
-      const weeklyData = [];
+    const calculateWeeklyTotals = (dailyMovements: any) => {
+      const weeklyData: any[] = [];
 
       // Helper function to get week number and year
       const getWeekInfo = (dateString: any) => {
         const date = new Date(dateString);
         const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const days = Math.floor((date - startOfYear) / (24 * 60 * 60 * 1000));
+        const days = Math.floor((date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
         const weekNumber = Math.ceil((days + startOfYear.getDay() + 1) / 7);
         return {
           year: date.getFullYear(),
@@ -111,7 +111,7 @@ const PDFReportLayout = React.forwardRef(
       };
 
       // Group daily movements by week
-      const weeklyGroups = {};
+      const weeklyGroups: any = {};
 
       dailyMovements.forEach((day: any) => {
         const weekInfo = getWeekInfo(day.date);
@@ -215,7 +215,7 @@ const PDFReportLayout = React.forwardRef(
 
           // Convert product stats to array and sort by total activity
           weekData.productStats = Object.values(weekData.productStats).sort(
-            (a, b) => b.totalIn + b.totalOut - (a.totalIn + a.totalOut)
+            (a: any, b: any) => b.totalIn + b.totalOut - (a.totalIn + a.totalOut)
           );
 
           weeklyData.push(weekData);
@@ -295,15 +295,15 @@ const PDFReportLayout = React.forwardRef(
             </div>
             <p className="text-sm font-semibold text-blue-800">Solde Net</p>
           </div>
-          {isChecked &&(
+          {isChecked && (
             <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
-            <div className="text-2xl font-bold text-purple-700">
-              {totalOutValue}dh
+              <div className="text-2xl font-bold text-purple-700">
+                {totalOutValue}dh
+              </div>
+              <p className="text-sm font-semibold text-purple-800">
+                Valeur Stock
+              </p>
             </div>
-            <p className="text-sm font-semibold text-purple-800">
-              Valeur Stock
-            </p>
-          </div>
           )}
         </div>
 
@@ -360,13 +360,12 @@ const PDFReportLayout = React.forwardRef(
                   </td>
                   <td className="px-4 py-3 text-center font-bold">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        monthData.net > 0
+                      className={`px-2 py-1 rounded-full text-xs ${monthData.net > 0
                           ? "bg-green-100 text-green-800"
                           : monthData.net < 0
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {monthData.net > 0 ? "+" : ""}
                       {monthData.net?.toLocaleString("fr-FR") || 0}
@@ -438,13 +437,12 @@ const PDFReportLayout = React.forwardRef(
                   </td>
                   <td className="px-4 py-3 text-center font-bold">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        week.net > 0
+                      className={`px-2 py-1 rounded-full text-xs ${week.net > 0
                           ? "bg-green-100 text-green-800"
                           : week.net < 0
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {week.net > 0 ? "+" : ""}
                       {week.net.toLocaleString("fr-FR")}
@@ -521,7 +519,7 @@ const PDFReportLayout = React.forwardRef(
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center font-bold">
-                   <span className="bg-amber-200">{consumationPerStudent.toFixed(3)} Dh</span>
+                  <span className="bg-amber-200">{consumationPerStudent.toFixed(3)} Dh</span>
                 </td>
               </tr>
             </tbody>
@@ -579,13 +577,12 @@ const PDFReportLayout = React.forwardRef(
                   </td>
                   <td className="px-4 py-3 text-center font-bold">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        category.net > 0
+                      className={`px-2 py-1 rounded-full text-xs ${category.net > 0
                           ? "bg-green-100 text-green-800"
                           : category.net < 0
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {category.net > 0 ? "+" : ""}
                       {category.net}
@@ -669,13 +666,12 @@ const PDFReportLayout = React.forwardRef(
                     </td>
                     <td className="px-4 py-3 text-center font-bold">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          product.currentStock < 20
+                        className={`px-2 py-1 rounded-full text-xs ${product.currentStock < 20
                             ? "bg-red-100 text-red-800"
                             : product.currentStock < 50
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-green-100 text-green-800"
-                        }`}
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
                       >
                         {product.currentStock}
                       </span>

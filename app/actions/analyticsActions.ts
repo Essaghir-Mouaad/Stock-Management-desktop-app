@@ -128,7 +128,6 @@ export async function getYearlyReport(year: number, userId?: string) {
         for (let month = 1; month <= 12; month++) {
             const monthData = await getMonthlySummary(year, month, userId);
             monthlyData.push({
-                month,
                 monthName: new Date(year, month - 1, 1).toLocaleString('default', { month: 'short' }),
                 ...monthData,
             });

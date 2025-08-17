@@ -40,6 +40,22 @@ import SelectedDayMvt from "./SelectedDayMvt";
 import PDFDownloadDailyReportButton from "./DailyButton";
 import BackupManager from "@/app/components/BackupManager";
 
+// Type definitions
+interface CurrentOverview {
+  totalProducts: number;
+  totalStockValue: number;
+  lowStockProducts: number;
+  highStockProducts: number;
+}
+
+interface AnalyticsData {
+  dailyMovements: any[];
+  monthlySummary: any | null;
+  categoryStats: any[];
+  productPerformance: any[];
+  currentOverview: CurrentOverview | null;
+}
+
 const AnalyticsDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -52,7 +68,7 @@ const AnalyticsDashboard = () => {
   );
   const [viewMode, setViewMode] = useState("overview"); // 'overview', 'daily', 'monthly', 'categories'
   const [loading, setLoading] = useState(true);
-  const [analyticsData, setAnalyticsData] = useState({
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData>({
     dailyMovements: [],
     monthlySummary: null,
     categoryStats: [],
@@ -198,9 +214,8 @@ const AnalyticsDashboard = () => {
           <Icon className={`w-8 h-8 text-${color}-600`} />
           {trend && (
             <div
-              className={`flex items-center text-sm ${
-                trend > 0 ? "text-green-600" : "text-red-600"
-              }`}
+              className={`flex items-center text-sm ${trend > 0 ? "text-green-600" : "text-red-600"
+                }`}
             >
               {trend > 0 ? (
                 <ArrowUpRight className="w-4 h-4 mr-1" />
@@ -247,13 +262,13 @@ const AnalyticsDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
       <Toaster position="top-right" />
-        
-        {/* Add the backup manager */}
-        <BackupManager 
-          analyticsData={analyticsData}
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-        />
+
+      {/* Add the backup manager */}
+      <BackupManager
+        analyticsData={analyticsData}
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+      />
       {/* Header */}
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
@@ -367,14 +382,14 @@ const AnalyticsDashboard = () => {
             ) : (
               <div id="printBtn">
                 <PDFDownloadButton
-                analyticsData={analyticsData}
-                selectedYear={selectedYear}
-                selectedMonth={selectedMonth}
-                toast={toast}
-                numberStudents={numberStudents}
-                isChecked={ischecked}
-                enableButton={numberStudents}
-              />
+                  analyticsData={analyticsData}
+                  selectedYear={selectedYear}
+                  selectedMonth={selectedMonth}
+                  toast={toast}
+                  numberStudents={numberStudents}
+                  isChecked={ischecked}
+                  enableButton={numberStudents}
+                />
               </div>
             )}
 
@@ -392,20 +407,19 @@ const AnalyticsDashboard = () => {
       {/* Navigation Tabs */}
       <div className="flex space-x-1 bg-white rounded-2xl p-1 mb-8 shadow-sm">
         {[
-          { id: "overview", label: "Vue d’ensemble", icon: Activity, guidId:'globalVue' },
-          { id: "daily", label: "Quotidien", icon: Calendar, guidId:'dailyVue' },
-          { id: "monthly", label: "Mensuel", icon: BarChart3, guidId:'monthlyVue' },
-          { id: "categories", label: "Catégories", icon: Target, guidId:'categoryVue' },
+          { id: "overview", label: "Vue d’ensemble", icon: Activity, guidId: 'globalVue' },
+          { id: "daily", label: "Quotidien", icon: Calendar, guidId: 'dailyVue' },
+          { id: "monthly", label: "Mensuel", icon: BarChart3, guidId: 'monthlyVue' },
+          { id: "categories", label: "Catégories", icon: Target, guidId: 'categoryVue' },
         ].map(({ id, label, icon: Icon, guidId }) => (
           <button
             id={guidId}
             key={id}
             onClick={() => setViewMode(id)}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 ${
-              viewMode === id
+            className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 ${viewMode === id
                 ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
                 : "text-gray-600 hover:bg-gray-50"
-            }`}
+              }`}
           >
             <Icon className="w-4 h-4" />
             <span className="font-medium">{label}</span>
@@ -418,45 +432,45 @@ const AnalyticsDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div id="numberOfProducts">
             <StatCard
-            title="Produits totaux"
-            value={analyticsData.currentOverview.totalProducts}
-            subtitle="En stock"
-            icon={Package}
-            trend={12}
-            color="blue"
-          />
+              title="Produits totaux"
+              value={analyticsData.currentOverview.totalProducts}
+              subtitle="En stock"
+              icon={Package}
+              trend={12}
+              color="blue"
+            />
           </div>
           <div id="valueTotal">
             <StatCard
-            title="Valeur totale du stock"
-            value={`${analyticsData.currentOverview.totalStockValue.toFixed(
-              2
-            )} DH`}
-            subtitle="Valeur actuelle"
-            icon={TrendingUp}
-            trend={8}
-            color="green"
-          />
+              title="Valeur totale du stock"
+              value={`${analyticsData.currentOverview.totalStockValue.toFixed(
+                2
+              )} DH`}
+              subtitle="Valeur actuelle"
+              icon={TrendingUp}
+              trend={8}
+              color="green"
+            />
           </div>
           <div id="underStock">
             <StatCard
-            title="Articles en faible stock"
-            value={analyticsData.currentOverview.lowStockProducts}
-            subtitle="À surveiller"
-            icon={TrendingDown}
-            trend={-5}
-            color="red"
-          />
+              title="Articles en faible stock"
+              value={analyticsData.currentOverview.lowStockProducts}
+              subtitle="À surveiller"
+              icon={TrendingDown}
+              trend={-5}
+              color="red"
+            />
           </div>
           <div id="highStock">
             <StatCard
-            title="Articles en stock élevé"
-            value={analyticsData.currentOverview.highStockProducts}
-            subtitle="Bien approvisionné"
-            icon={Activity}
-            trend={3}
-            color="purple"
-          />
+              title="Articles en stock élevé"
+              value={analyticsData.currentOverview.highStockProducts}
+              subtitle="Bien approvisionné"
+              icon={Activity}
+              trend={3}
+              color="purple"
+            />
           </div>
         </div>
       )}

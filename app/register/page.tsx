@@ -2,28 +2,40 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, Lock, Shield, Sparkles, Eye, EyeOff, Home } from "lucide-react";
+import { HybridServices } from "../services/hybridService";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "", name: "", role: "WORKER" });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e:React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Your original API call code here
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const data = await res.json();
-    if (data.success) router.push("/login");
-    else setError(data.message);
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const result = await HybridServices.Auth.register(form);
+
+      if (result.success) {
+        toast.success("Account created successfully!");
+        router.push("/login");
+      } else {
+        setError(result.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError("Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-   return (
+  return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
@@ -34,29 +46,29 @@ export default function RegisterPage() {
 
       {/* Fixed Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '10%', top: '20%', animationDelay: '0s', animationDuration: '2s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '25%', top: '15%', animationDelay: '0.5s', animationDuration: '2.5s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '40%', top: '30%', animationDelay: '1s', animationDuration: '3s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '60%', top: '25%', animationDelay: '1.5s', animationDuration: '2.2s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '75%', top: '35%', animationDelay: '0.8s', animationDuration: '2.8s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '85%', top: '20%', animationDelay: '1.2s', animationDuration: '3.2s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '15%', top: '60%', animationDelay: '0.3s', animationDuration: '2.7s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '30%', top: '70%', animationDelay: '1.8s', animationDuration: '2.4s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '50%', top: '65%', animationDelay: '0.7s', animationDuration: '3.5s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '70%', top: '75%', animationDelay: '1.4s', animationDuration: '2.1s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '90%', top: '70%', animationDelay: '0.2s', animationDuration: '2.9s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '20%', top: '85%', animationDelay: '1.6s', animationDuration: '3.1s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '45%', top: '90%', animationDelay: '0.9s', animationDuration: '2.6s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '65%', top: '85%', animationDelay: '1.1s', animationDuration: '3.3s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '80%', top: '90%', animationDelay: '0.4s', animationDuration: '2.3s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '5%', top: '45%', animationDelay: '1.3s', animationDuration: '2.8s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '95%', top: '50%', animationDelay: '0.6s', animationDuration: '3.4s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '35%', top: '5%', animationDelay: '1.7s', animationDuration: '2.5s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '55%', top: '10%', animationDelay: '0.1s', animationDuration: '3.6s'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{left: '75%', top: '8%', animationDelay: '1.9s', animationDuration: '2.2s'}}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '10%', top: '20%', animationDelay: '0s', animationDuration: '2s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '25%', top: '15%', animationDelay: '0.5s', animationDuration: '2.5s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '40%', top: '30%', animationDelay: '1s', animationDuration: '3s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '60%', top: '25%', animationDelay: '1.5s', animationDuration: '2.2s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '75%', top: '35%', animationDelay: '0.8s', animationDuration: '2.8s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '85%', top: '20%', animationDelay: '1.2s', animationDuration: '3.2s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '15%', top: '60%', animationDelay: '0.3s', animationDuration: '2.7s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '30%', top: '70%', animationDelay: '1.8s', animationDuration: '2.4s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '50%', top: '65%', animationDelay: '0.7s', animationDuration: '3.5s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '70%', top: '75%', animationDelay: '1.4s', animationDuration: '2.1s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '90%', top: '70%', animationDelay: '0.2s', animationDuration: '2.9s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '20%', top: '85%', animationDelay: '1.6s', animationDuration: '3.1s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '45%', top: '90%', animationDelay: '0.9s', animationDuration: '2.6s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '65%', top: '85%', animationDelay: '1.1s', animationDuration: '3.3s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '80%', top: '90%', animationDelay: '0.4s', animationDuration: '2.3s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '5%', top: '45%', animationDelay: '1.3s', animationDuration: '2.8s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '95%', top: '50%', animationDelay: '0.6s', animationDuration: '3.4s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '35%', top: '5%', animationDelay: '1.7s', animationDuration: '2.5s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '55%', top: '10%', animationDelay: '0.1s', animationDuration: '3.6s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style={{ left: '75%', top: '8%', animationDelay: '1.9s', animationDuration: '2.2s' }}></div>
       </div>
-      <div className="p-3 bg-gradient-to-tr from-purple-700 to-blue-600 mb-2 rounded-xl animate-bounce cursor-pointer" onClick={()=>router.push("/")}>
-        <Home className="w-15 h-15 text-gray-200"/>
+      <div className="p-3 bg-gradient-to-tr from-purple-700 to-blue-600 mb-2 rounded-xl animate-bounce cursor-pointer" onClick={() => router.push("/")}>
+        <Home className="w-15 h-15 text-gray-200" />
       </div>
 
       <div className="relative z-10 w-full max-w-md transform hover:scale-105 transition-all duration-500">
@@ -64,11 +76,11 @@ export default function RegisterPage() {
         <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/20 shadow-2xl relative overflow-hidden">
           {/* Animated Border Glow */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-3xl blur-xl animate-pulse"></div>
-          
+
           <div className="relative z-10">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 animate-spin" style={{animationDuration: '8s'}}>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-4 animate-spin" style={{ animationDuration: '8s' }}>
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <h2 className="text-4xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent mb-2">
@@ -207,14 +219,21 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="group relative w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl text-white font-semibold overflow-hidden hover:shadow-2xl hover:shadow-purple-500/25 transform hover:-translate-y-1 transition-all duration-300"
+                disabled={isLoading}
+                className="group relative w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl text-white font-semibold overflow-hidden hover:shadow-2xl hover:shadow-purple-500/25 transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center space-x-2">
-                  <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
-                  <span className="group-hover:scale-105 transition-transform duration-300">Create Account</span>
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <Shield className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" />
+                  )}
+                  <span className="group-hover:scale-105 transition-transform duration-300">
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                  </span>
                 </div>
-                
+
                 {/* Button shine effect */}
                 <div className="absolute inset-0 -top-1 -left-1 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 opacity-0 group-hover:animate-pulse"></div>
               </button>

@@ -3,27 +3,36 @@ import { useState } from "react";
 import { User, Lock, LogIn, Eye, EyeOff, LucideArrowRightFromLine, ArrowBigLeftIcon, Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { HybridServices } from "../services/hybridService";
+
 export default function LoginPage() {
   const [form, setForm] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e:React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-      credentials: "include",
-    });
-    const data = await res.json();
+    setIsLoading(true);
 
-    if (data.success) {
-      toast.success("Login successful!");
-      if (data.user.role === "ADMIN") router.push("/admin/dashboard");
-      else router.push("/worker/dashboard");
-    } else {
-      toast.error(data.message || "Invalid username or password");
+    try {
+      const result = await HybridServices.Auth.login(form);
+
+      if (result.success) {
+        toast.success("Login successful!");
+        if (result.user?.role === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/worker/dashboard");
+        }
+      } else {
+        toast.error(result.message || "Invalid username or password");
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -36,7 +45,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Static Background Elements */}
-      
+
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
@@ -45,25 +54,25 @@ export default function LoginPage() {
 
       {/* Static Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '10%', top: '20%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '25%', top: '15%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '40%', top: '30%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '60%', top: '25%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '75%', top: '35%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '85%', top: '20%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '15%', top: '60%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '30%', top: '70%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '50%', top: '65%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '70%', top: '75%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '90%', top: '70%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '20%', top: '85%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '45%', top: '90%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '65%', top: '85%'}}></div>
-        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{left: '80%', top: '90%'}}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '10%', top: '20%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '25%', top: '15%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '40%', top: '30%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '60%', top: '25%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '75%', top: '35%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '85%', top: '20%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '15%', top: '60%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '30%', top: '70%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '50%', top: '65%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '70%', top: '75%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '90%', top: '70%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '20%', top: '85%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '45%', top: '90%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '65%', top: '85%' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full" style={{ left: '80%', top: '90%' }}></div>
       </div>
 
-      <div className="p-3 bg-gradient-to-tr from-purple-700 to-blue-600 mb-2 rounded-xl animate-bounce cursor-pointer" onClick={()=>router.push("/")}>
-        <Home className="w-15 h-15 text-gray-200"/>
+      <div className="p-3 bg-gradient-to-tr from-purple-700 to-blue-600 mb-2 rounded-xl animate-bounce cursor-pointer" onClick={() => router.push("/")}>
+        <Home className="w-15 h-15 text-gray-200" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
@@ -71,7 +80,7 @@ export default function LoginPage() {
         <div className="bg-white/10 backdrop-blur-2xl rounded-3xl p-8 border border-white/20 shadow-2xl relative overflow-hidden">
           {/* Static Border Glow */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-3xl blur-xl"></div>
-          
+
           <div className="relative z-10">
             {/* Header */}
             <div className="text-center mb-8">
@@ -138,11 +147,16 @@ export default function LoginPage() {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="group relative w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl text-white font-semibold overflow-hidden hover:shadow-2xl hover:shadow-purple-500/25 hover:bg-gradient-to-r hover:from-purple-500 hover:via-pink-500 hover:to-blue-500"
+                disabled={isLoading}
+                className="group relative w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl text-white font-semibold overflow-hidden hover:shadow-2xl hover:shadow-purple-500/25 hover:bg-gradient-to-r hover:from-purple-500 hover:via-pink-500 hover:to-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="relative flex items-center justify-center space-x-2">
-                  <LogIn className="w-5 h-5" />
-                  <span>Sign In</span>
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <LogIn className="w-5 h-5" />
+                  )}
+                  <span>{isLoading ? "Signing In..." : "Sign In"}</span>
                 </div>
               </button>
             </div>

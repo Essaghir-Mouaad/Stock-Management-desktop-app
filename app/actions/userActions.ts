@@ -3,6 +3,7 @@
 import prisma from "../../lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { Role } from "@prisma/client";
 
 const SECRET = process.env.JWT_SECRET || "super_secret_key";
 
@@ -12,7 +13,7 @@ export async function createUser(
   email: string,
   password: string,
   name: string,
-  role: string = "WORKER"
+  role: Role = Role.WORKER
 ) {
   try {
     const existingUser = await prisma.user.findUnique({ where: { username } });
@@ -53,7 +54,7 @@ export async function loginUser(username: string, password: string) {
         id: user.id,
         role: user.role,
         email: user.email,
-        name: user.name, 
+        name: user.name,
       },
       SECRET,
       { expiresIn: "1d" }

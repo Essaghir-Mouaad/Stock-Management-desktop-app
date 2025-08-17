@@ -23,6 +23,7 @@ import CurrentInvoice from "@/app/admin/dashboard/components/RestOfStock/Current
 
 import dynamic from "next/dynamic";
 import "intro.js/introjs.css";
+import { HybridServices } from "@/app/services/hybridService";
 
 const Steps = dynamic(() => import("intro.js-react").then((mod) => mod.Steps), {
   ssr: false,
@@ -35,12 +36,12 @@ const page = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/auth/logout", { method: "POST" });
-      if (res.ok) {
-        router.push("/login");
-      }
+      await HybridServices.Auth.logout();
+      router.push("/login");
     } catch (error) {
       console.error("Logout error:", error);
+      // Still redirect even if logout fails
+      router.push("/login");
     }
   };
 
@@ -468,20 +469,18 @@ const page = () => {
 
       <div className="flex gap-4 h-screen p-4">
         <aside
-          className={`flex flex-col justify-between p-3 lg:p-4 rounded-2xl border border-accent shadow-md h-fit md:h-full transition-all duration-300 ease-in-out ${
-            sidebarCollapsed
+          className={`flex flex-col justify-between p-3 lg:p-4 rounded-2xl border border-accent shadow-md h-fit md:h-full transition-all duration-300 ease-in-out ${sidebarCollapsed
               ? "w-0 opacity-0 pointer-events-none -translate-x-4"
               : "w-16 lg:w-64 opacity-100 translate-x-0"
-          }`}
+            }`}
         >
           <nav className="flex flex-col gap-3">
             <button
               id="acceuilBtn"
-              className={`group flex items-center justify-between gap-3 py-4 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${
-                activeTab === "home"
+              className={`group flex items-center justify-between gap-3 py-4 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${activeTab === "home"
                   ? "bg-primary text-primary-content shadow-lg"
                   : "bg-base-200 text-base-content hover:bg-primary/10 hover:text-primary hover:shadow-md hover:scale-[1.02]"
-              }`}
+                }`}
               onClick={() => setActiveTab("home")}
             >
               <div className="flex items-center ">
@@ -503,11 +502,10 @@ const page = () => {
 
             <button
               id="productBtn"
-              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${
-                activeTab === "set-data"
+              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${activeTab === "set-data"
                   ? "bg-primary text-primary-content shadow-lg"
                   : "bg-base-200 text-base-content hover:bg-primary/10 hover:text-primary hover:shadow-md hover:scale-[1.02]"
-              }`}
+                }`}
               onClick={() => setActiveTab("set-data")}
             >
               <div className="flex items-center">
@@ -528,11 +526,10 @@ const page = () => {
 
             <button
               id="suiviBtn"
-              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${
-                activeTab === "track"
+              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${activeTab === "track"
                   ? "bg-primary text-primary-content shadow-lg"
                   : "bg-base-200 text-base-content hover:bg-primary/10 hover:text-primary hover:shadow-md hover:scale-[1.02]"
-              }`}
+                }`}
               onClick={() => setActiveTab("track")}
             >
               <div className="flex items-center">
@@ -556,11 +553,10 @@ const page = () => {
 
             <button
               id="staticBtn"
-              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${
-                activeTab === "analysis"
+              className={`group flex items-center justify-between gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${activeTab === "analysis"
                   ? "bg-primary text-primary-content shadow-lg"
                   : "bg-base-200 text-base-content hover:bg-primary/10 hover:text-primary hover:shadow-md hover:scale-[1.02]"
-              }`}
+                }`}
               onClick={() => setActiveTab("analysis")}
             >
               <div className="flex items-center">
@@ -582,11 +578,10 @@ const page = () => {
 
             <button
               id="getCurrentBtn"
-              className={`group flex items-center justify-center lg:justify-start gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${
-                activeTab === "invoice"
+              className={`group flex items-center justify-center lg:justify-start gap-3 py-3 px-3 lg:px-4 rounded-xl font-semibold cursor-pointer transition-all duration-200 ${activeTab === "invoice"
                   ? "bg-primary text-primary-content shadow-lg"
                   : "bg-base-200 text-base-content hover:bg-primary/10 hover:text-primary hover:shadow-md hover:scale-[1.02]"
-              }`}
+                }`}
               onClick={() => setActiveTab("invoice")}
             >
               <Receipt className="w-5 h-5 flex-shrink-0" />
@@ -599,9 +594,8 @@ const page = () => {
 
         <main
           id="mainSection"
-          className={`flex-1 border border-accent rounded-2xl p-6 shadow-inner overflow-auto transition-all duration-300 ease-in-out ${
-            sidebarCollapsed ? "ml-0" : ""
-          }`}
+          className={`flex-1 border border-accent rounded-2xl p-6 shadow-inner overflow-auto transition-all duration-300 ease-in-out ${sidebarCollapsed ? "ml-0" : ""
+            }`}
         >
           {renderContent()}
         </main>
